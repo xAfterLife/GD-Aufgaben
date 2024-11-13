@@ -131,5 +131,6 @@ namespace ConsoleRPG
             RewardGold = rewardGold;
             RewardXP = rewardXP;
         }
+
     }
 }

@@ -104,20 +104,59 @@ namespace ConsoleRPG
             while (playing)
             {
                 ShowPlayerMenu();
+                Console.Write($"{space}Bitte wähle eine Option: ");
                 
+                if (int.TryParse(Console.ReadLine(), out int playerchoice))
+                {
+                    DrawSeperator();
 
+                    switch (playerchoice)
+                    {
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            //Kommt später eine Speicher & Game schließen Methode rein
+                            Console.WriteLine($"{space}Das Spiel wird beendet..");
+                            Thread.Sleep(3000);
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"{space}Ungültige Eingabe, bitte probiere es erneut.");
+                            Console.ResetColor();
+                            Console.ReadKey();
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{space}Ungültige Eingabe, bitte gebe eine Zahl 1-6 ein.");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    DrawSeperator();
+                }
             }
-    
         }
 
         static void ShowPlayerMenu()
         {
-            //1. Kämpfen(muss ich noch adden)
-            //2. Inventar (muss ich noch adden)
-            //3. Shop(muss ich noch adden)
-            //4. Taverne(muss ich noch adden)
-            //5. Playerstats(muss ich noch adden)
-            //6. Speichern & Beenden(muss ich noch adden)
+            DrawSeperator();
+            Console.WriteLine($"{space}1. Kämpfen");
+            Console.WriteLine($"{space}2. Inventar");
+            Console.WriteLine($"{space}3. Shop");
+            Console.WriteLine($"{space}4. Taverne");
+            Console.WriteLine($"{space}5. Playerstats");
+            Console.WriteLine($"{space}6. Speichern und Beenden");
+            DrawSeperator();
         }
         static void AdjustPlayerForDifficulty(Player player, int difficulty)
         {
