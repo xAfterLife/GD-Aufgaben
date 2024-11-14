@@ -15,7 +15,6 @@ namespace ConsoleRPG
             Console.Title = "ConsoleRPG";
             Random random = new();
             bool gameStart = true;
-            int firstTimeCounter = 0;
 
             //Test Data, wird später in einer File gespeichert und geladen
             statistics.Add(new Statistics("Leon", 5, 10, 200));
@@ -94,17 +93,22 @@ namespace ConsoleRPG
             string playerName = GetPlayerName();
             int difficulty = GetDifficultyLevel();
 
+            // Erstelle eine leere Inventar-Liste
+            List<Items> inventory = new List<Items>();
+
             //Standard stats für normal
-            Player player = new Player(playerName, 100, 25, 1, 0, 50);
+            Player player = new Player(playerName, 100, 10, 1, 0, 50, inventory );
             AdjustPlayerForDifficulty(player, difficulty);
             ShowPlayerStats(player);
+            Console.ReadKey();
 
             bool playing = true;
 
             while (playing)
             {
+                Console.Clear();
                 ShowPlayerMenu();
-                Console.Write($"{space}Bitte wähle eine Option: ");
+                
                 
                 if (int.TryParse(Console.ReadLine(), out int playerchoice))
                 {
@@ -113,14 +117,25 @@ namespace ConsoleRPG
                     switch (playerchoice)
                     {
                         case 1:
+                            Battle battle = new(player, 1);
+                            battle.StartBattle();
                             break;
                         case 2:
+                            player.ShowPlayerInventory(player);
+                            Console.ReadKey();
                             break;
                         case 3:
+                            //Shop bis Stufe 3 Geschlossen
+                            Console.WriteLine("   Der Shop ist zurzeit leider noch geschlossen.");
+                            Console.ReadKey();
                             break;
                         case 4:
+                            Console.WriteLine($"{space}Die Taverne hat noch zu.");
+                            Console.ReadKey();
                             break;
                         case 5:
+                            ShowPlayerStats(player);
+                            Console.ReadKey();
                             break;
                         case 6:
                             //Kommt später eine Speicher & Game schließen Methode rein
@@ -149,6 +164,7 @@ namespace ConsoleRPG
 
         static void ShowPlayerMenu()
         {
+            Console.WriteLine($"{space}Spielermenü");
             DrawSeperator();
             Console.WriteLine($"{space}1. Kämpfen");
             Console.WriteLine($"{space}2. Inventar");
@@ -157,6 +173,7 @@ namespace ConsoleRPG
             Console.WriteLine($"{space}5. Playerstats");
             Console.WriteLine($"{space}6. Speichern und Beenden");
             DrawSeperator();
+            Console.Write($"{space}Bitte wähle eine Option: ");
         }
         static void AdjustPlayerForDifficulty(Player player, int difficulty)
         {
@@ -165,23 +182,24 @@ namespace ConsoleRPG
             {
                 case 1: //Einfach
                     player.Health += 100;
-                    player.AttackPower += 15;
+                    player.MaxHealth = player.Health;
+                    player.AttackPower += 5;
                     player.Gold += 50;
                     Console.ForegroundColor= ConsoleColor.Green;
-                    Console.WriteLine($"{space}Einfacher Modus gewählt. Deine Werte wurden angepasst.");
+                    Console.WriteLine($"{space}Einfacher Modus gewählt. \n{space}Deine Werte wurden angepasst.");
                     Console.ResetColor();
                     break;
                 case 2: //Normal
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    Console.WriteLine($"{space}Normaler Modus gewählt. Standardwerte behalten.");
+                    Console.WriteLine($"{space}Normaler Modus gewählt. \n{space}Standardwerte behalten.");
                     Console.ResetColor();
                     break;
                 case 3: //Schwer
                     player.Health -= 50;
-                    player.AttackPower -= 10;
+                    player.AttackPower -= 5;
                     player.Gold -= 50;
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"{space}Schwerer Modus gewählt. Deine Werte wurden angepasst.");
+                    Console.WriteLine($"{space}Schwerer Modus gewählt. \n{space}Deine Werte wurden angepasst.");
                     Console.ResetColor();
                     break;
 
@@ -201,7 +219,6 @@ namespace ConsoleRPG
             Console.WriteLine($"{space}Erfahrung: {player.Experience}/{(player.Level * 100)}");
             Console.WriteLine($"{space}Gold: {player.Gold}");
             DrawSeperator();
-            Console.ReadKey();
         }
 
         static int GetDifficultyLevel()
@@ -212,9 +229,7 @@ namespace ConsoleRPG
             while (!validChoice)
             {
                 DrawSeperator();
-                Console.WriteLine($"{space}Als nächstes musst du dich für einen\n{space}Schwierigkeitsgrad entscheiden.");
-                Console.WriteLine($"{space}Basierend auf der Schwierigkeit werden\n{space}alle Stats im Spiel angepasst.");
-
+                Console.WriteLine($"{space}Wähle deinen Schwierigkeitsgrad");
                 DrawSeperator();
 
                 Console.ForegroundColor = ConsoleColor.Green;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
+    
     public class Character
     {
         //Initialisieren/Deklarieren der Random Klasse
@@ -33,16 +34,7 @@ namespace ConsoleRPG
             AttackPower = damage;
             //Methode evt. für den Player überschreiben damit nur er crits machen kann
             //Crit Chance 20% für doppelten Schaden
-            int crit = random.Next(1, 10);
-            if (crit > 8)
-            {
-                damage *= 2;
-                return damage;
-            }
-            else
-            {
-                return damage;
-            }     
+            return damage;
         }
         //Nimmt damage als Parameter und zieht es dem Leben der Character Instanz ab.
         public int TakeDamage(int damage)
