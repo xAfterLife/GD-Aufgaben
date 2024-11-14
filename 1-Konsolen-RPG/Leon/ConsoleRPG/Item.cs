@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleRPG
 {
-    public class Items
+    public class Item
     {
+        public string Name { get; set; }
+
     }
 }

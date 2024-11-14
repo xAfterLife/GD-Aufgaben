@@ -12,17 +12,12 @@ namespace ConsoleRPG
         const string space = "      ";
         private Player player;
         private Monster monster;
-        private int counter;
-        private int round;
-
-        public Battle(Player player, int round)
+        public Battle(Player player)
         {
             this.player = player;
-            this.counter = 0;
-            this.round = round;
 
             //Generiere ein Monster basierend auf der Runde
-            this.monster = GenerateMonster(round);
+            this.monster = GenerateMonster(player.Round);
 
             //Starte kampf
             StartBattle();
@@ -45,12 +40,12 @@ namespace ConsoleRPG
         {
             List<string> names = new List<string>()
             {
-                "Schattenspinne", "Dunkelklaue", "Blutfresser", "Frostwächter", "Knochenbrecher",
-                "Schattenwolf", "Nachtkriecher", "Flammengeist", "Schreckensbestie", "Giftklaue",
+                "Schattenspinner", "Dunkelklauer", "Blutfresser", "Frostwächter", "Knochenbrecher",
+                "Schattenwolf", "Nachtkriecher", "Flammengeist", "Schreckensbestie", "Giftklauer",
                 "Sturmreiter", "Felsbiss", "Eisenkrieger", "Dornenschreiter", "Donnersturm",
-                "Seelenjäger", "Felsbrecher", "Nebelkriecher", "Todeskriecher", "Zornklaue",
-                "Schattengräber", "Geisterwolf", "Bluttrinker", "Düsterhorn", "Dämonenschwinge",
-                "Klingenhund", "Flammenkralle", "Knochenhund", "Schattenschwinge", "Dunkelzahn"
+                "Seelenjäger", "Felsbrecher", "Nebelkriecher", "Todeskriecher", "Zornklauer",
+                "Schattengräber", "Geisterwolf", "Bluttrinker", "Düsterhorn", "Dämonenschwinger",
+                "Klingenhund", "Flammenkralle", "Knochenhund", "Schattenschwinger", "Dunkelzahn"
             };
 
             Random random = new Random();
@@ -61,17 +56,22 @@ namespace ConsoleRPG
 
         public void StartBattle()
         {
+            Console.Clear();
             bool fighting = true;
-            
-            
+            int times = 0;
+
             while (fighting)
             {
                 Console.Clear();
-                DrawSeperator();
-                Console.WriteLine($"{space}Ein {monster.Name} taucht auf!\n{space}Runde {round} beginnt!");
-                Thread.Sleep(2000);
-                ShowPlayerMenu();
+                if (times < 1)
+                {
+                    DrawSeperator();
+                    Console.WriteLine($"{space}Ein {monster.Name} taucht auf!\n{space}Runde {player.Round} beginnt!");
+                    times++;
+                    Thread.Sleep(2000);
+                }
 
+                ShowPlayerMenu();
                 Console.Write($"{space}Bitte wähle: ");
                 if (int.TryParse(Console.ReadLine(), out int playerchoice))
                 {
@@ -80,16 +80,18 @@ namespace ConsoleRPG
                         case 1:
                             DrawSeperator();
                             PlayerAttack(player.AttackPower);
+                            DrawSeperator();
                             Thread.Sleep(1000);
                             break;
                         case 2:
-                            player.Heal(10 * round);
+                            player.Heal(10 * player.Round);
                             break;
                         case 3:
-                            player.ShowPlayerInventory(player);
+                            player.ShowPlayerInventory();
                             break;
                         case 4:
                             AttemptEscape(ref fighting);
+                            if (!fighting) return;  // Sofortiges Beenden der Methode, wenn die Flucht erfolgreich ist
                             break;
                         case 5:
                             Console.WriteLine($"{space}Wird gespeichert..");
@@ -99,6 +101,7 @@ namespace ConsoleRPG
                             Console.WriteLine($"{space}Ungültige Eingabe..");
                             break;
                     }
+
                     if (monster.Health <= 0)
                     {
                         DrawSeperator();
@@ -106,18 +109,18 @@ namespace ConsoleRPG
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"{space}Du bekommst {monster.RewardXP} Erfahrung.");
                         Console.ResetColor();
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
                         Console.WriteLine($"{space}Du bekommst {monster.RewardGold} Gold.");
                         Console.ResetColor();
                         DrawSeperator();
+
                         player.GainExperience(monster.RewardXP);
                         player.Gold += monster.RewardGold;
-                        round++;
+                        player.Round++;
 
                         Console.ReadKey();
-
-                        monster = GenerateMonster(round);
-                        
+                        times = 0;
+                        monster = GenerateMonster(player.Round);
                     }
                     else if (player.Health <= 0)
                     {
@@ -128,7 +131,7 @@ namespace ConsoleRPG
                         Console.ReadKey();
                         Environment.Exit(0);
                     }
-                    else
+                    else if (fighting)
                     {
                         MonsterAttack(monster.AttackPower);
                         Thread.Sleep(2000);
@@ -136,6 +139,7 @@ namespace ConsoleRPG
                 }
             }
         }
+
 
         private void ShowPlayerMenu()
         {
@@ -153,7 +157,7 @@ namespace ConsoleRPG
 
         private void ShowBattleStatus()
         {
-            Console.WriteLine($"{space}Runde: {round}");
+            Console.WriteLine($"{space}Runde: {player.Round}");
             Console.WriteLine($"{space}{player.Name}: {player.Health}/{player.MaxHealth}HP | {monster.Name}: {monster.Health}HP");
             Thread.Sleep(2000);
         }
@@ -169,28 +173,47 @@ namespace ConsoleRPG
         }
         private void PlayerAttack(int damage)
         {
-            int totalDamage = player.Attack(damage);
+            int totalDamage = damage;
+
+            // Wenn der Spieler eine Waffe hat, füge deren Angriffskraft zur Berechnung hinzu
+            if (player.CurrentWeapon != null)
+            {
+                totalDamage += player.CurrentWeapon.AttackPower;
+            }
+
+            totalDamage = player.Attack(totalDamage);
             monster.Health -= totalDamage;
-            Console.WriteLine($"{space}{player.Name} greift {monster.Name} an \n{space}und verursacht {totalDamage} Schaden!");
+
+            
+            if (player.CurrentWeapon != null)
+            {
+                Console.WriteLine($"{space}{player.Name} greift {monster.Name}");
+                Console.WriteLine($"{space}mit {player.CurrentWeapon.Name} und verursacht {totalDamage} Schaden!");
+            }
+            else
+            {
+                Console.WriteLine($"{space}{player.Name} greift {monster.Name} an ");
+                Console.WriteLine($"{space}und verursacht {totalDamage} Schaden!");
+            }
         }
+
+
         private void MonsterAttack(int damage)
         {
             int totalDamage = monster.Attack(damage);
             player.Health -= totalDamage;
-            Console.WriteLine($"{space}{monster.Name} greift {player.Name} an und verursacht {totalDamage} Schaden!");
+            Console.WriteLine($"{space}{monster.Name} greift {player.Name} an \n{space}und verursacht {totalDamage} Schaden!");
+            DrawSeperator();
         }
         private void AttemptEscape(ref bool fighting)
         {
-
             Random random = new Random();
-
             int chance = random.Next(1, 101);
 
-            if ( chance > 50 )
+            if (chance > 20)  // 80% Fluchtchance
             {
-                Console.WriteLine($"{space}Du bist geflohen.");
-                fighting = false;
-                
+                Console.WriteLine($"{space}Du bist erfolgreich geflohen.");
+                fighting = false;  // Setzt fighting sofort auf false
                 Console.ReadKey();
             }
             else
@@ -198,7 +221,8 @@ namespace ConsoleRPG
                 Console.WriteLine($"{space}Die Flucht ist gescheitert.");
             }
         }
-        
+
+
 
     }
 }

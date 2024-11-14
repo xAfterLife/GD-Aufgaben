@@ -14,11 +14,12 @@ namespace ConsoleRPG
         public int Level { get; set; }
         public int Experience { get; set; }
         public int Gold { get; set; }
-
-        public List<Items> Inventory { get; set; } = new List<Items>();
+        public Weapon CurrentWeapon { get; set; }
+        public List<Item> Inventory { get; set; }
+        public int Round { get; set; } = 1;
 
         //Konstruktor des Players, name, health & attackPower müssen hier nicht gleichgesetzt werden, da die Klasse erbt
-        public Player(string name, int health, int attackPower, int level, int experience, int gold, List <Items> inventory)
+        public Player(string name, int health, int attackPower, int level, int experience, int gold, List <Item> inventory)
             : base(name, health, attackPower)
         {
             Level = level;
@@ -26,10 +27,8 @@ namespace ConsoleRPG
             Gold = gold;
             Inventory = inventory;
         }
-        //Fügt dem Spieler Erfahrung hinzu, wenn der Spieler Level 3 ist, werden 300 XP benötigt 
-        //Um LevelUp zu kommen usw. 
-        //Wenn Experience mehr als Level * 100 dann kriegt der Spieler einen Levelup und wenn
-        //nicht, dann kriegt er nur die Erfahrungspunkte hinzu addiert
+        
+
         public void GainExperience(int xp)
         {
             if ((Level * 100) <= Experience)
@@ -50,14 +49,15 @@ namespace ConsoleRPG
             MaxHealth += 25;
             //Bei einem Levelaufstieg kriegt man immer wieder maximales Leben
             Health = MaxHealth;
-
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{space}Level Up!\n{space}Neues Level: {Level}");
+            Console.ResetColor();
+            DrawSeperator();
+            Console.ReadKey();
             //Nach dem Lvlup werden alle gesammelten Erfahrungspunkte auf 0 gesetzt, da
             //Der Spieler eine Stufe aufgestiegen ist und wieder bei 0 beginnt
             Experience = 0;
         }
-        //Methode zum heilen, wenn die höhe der Heilung und das aktuelle Leben über Maxhealth
-        //hinaus geht, dann wird das aktuelle Leben einfach auf MaxHealth gesetzt
-        //Wenn nicht dann füge healingamount dem Leben zu
         public void Heal(int healingAmount)
         {
             if ((healingAmount + Health) > MaxHealth)
@@ -91,19 +91,66 @@ namespace ConsoleRPG
                 return damage;
             }
         }
-        public void ShowPlayerInventory(Player player)
+        public void ShowPlayerInventory()
         {
-            foreach (Items item in player.Inventory)
+            if (Inventory.Count > 0)
             {
-                if (player.Inventory.Count > 0)
+                Console.WriteLine($"{space}Inventar:");
+                foreach (Item item in Inventory)
                 {
-                    Console.WriteLine($"{space}{item},\n");
-                }
-                else
-                {
-                    Console.WriteLine("Du hast noch keine Items.");
+                    if (item == CurrentWeapon)
+                    {
+                        Console.WriteLine($"{space}{item.Name} (ausgerüstet)");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{space}{item.Name}");
+                    }
                 }
             }
+            else
+            {
+                Console.WriteLine($"{space}Du hast noch keine Items.");
+            }
+        }
+
+
+        public void ShowPlayerStats()
+        {
+            Console.WriteLine($"{space}Deine Stats");
+            Console.WriteLine();
+            Console.WriteLine($"{space}Name: {Name}");
+            Console.WriteLine($"{space}Leben: {Health}/{MaxHealth}");
+            Console.WriteLine($"{space}Level: {Level}");
+
+            // Zeige Angriffskraft mit Waffenschaden
+            Console.Write($"{space}Angriffskraft: {AttackPower}");
+            if (CurrentWeapon != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($" (+{CurrentWeapon.AttackPower} {CurrentWeapon.Name})");
+                Console.ResetColor();
+            }
+            Console.WriteLine();
+
+            Console.WriteLine($"{space}Erfahrung: {Experience}/{(Level * 100)}");
+
+            Console.Write($"{space}Gold: ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(Gold);
+            Console.ResetColor();
+            Program.DrawSeperator();
+        }
+
+
+        public static void DrawSeperator()
+        {
+            Console.Write("+");
+            for (int i = 0; i < 50; i++)
+            {
+                Console.Write("-");
+            }
+            Console.WriteLine("+");
         }
     }
 }

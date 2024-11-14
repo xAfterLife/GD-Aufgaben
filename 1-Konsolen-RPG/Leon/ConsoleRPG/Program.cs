@@ -51,7 +51,7 @@ namespace ConsoleRPG
                         case 2:
                             break;
                         case 3:
-                            ShowStatistics(statistics);
+                            Statistics.ShowStatistics(statistics);
                             Console.ReadKey();
                             break;
                         case 4:
@@ -94,12 +94,12 @@ namespace ConsoleRPG
             int difficulty = GetDifficultyLevel();
 
             // Erstelle eine leere Inventar-Liste
-            List<Items> inventory = new List<Items>();
+            List<Item> inventory = new List<Item>();
 
             //Standard stats für normal
             Player player = new Player(playerName, 100, 10, 1, 0, 50, inventory );
             AdjustPlayerForDifficulty(player, difficulty);
-            ShowPlayerStats(player);
+            player.ShowPlayerStats();
             Console.ReadKey();
 
             bool playing = true;
@@ -117,24 +117,26 @@ namespace ConsoleRPG
                     switch (playerchoice)
                     {
                         case 1:
-                            Battle battle = new(player, 1);
+                            Battle battle = new(player);
+                            Thread.Sleep(1000);
                             battle.StartBattle();
+                            
                             break;
                         case 2:
-                            player.ShowPlayerInventory(player);
+                            player.ShowPlayerInventory();
                             Console.ReadKey();
                             break;
                         case 3:
-                            //Shop bis Stufe 3 Geschlossen
-                            Console.WriteLine("   Der Shop ist zurzeit leider noch geschlossen.");
-                            Console.ReadKey();
+                            Shop shop = new Shop(new ItemDataBase(), player.Level);
+                            shop.ShowShopItems(player);
+
                             break;
                         case 4:
                             Console.WriteLine($"{space}Die Taverne hat noch zu.");
                             Console.ReadKey();
                             break;
                         case 5:
-                            ShowPlayerStats(player);
+                            player.ShowPlayerStats();
                             Console.ReadKey();
                             break;
                         case 6:
@@ -207,20 +209,6 @@ namespace ConsoleRPG
             DrawSeperator();
             Thread.Sleep(3000);
         }
-
-        static void ShowPlayerStats(Player player)
-        {
-            Console.WriteLine($"{space}Deine Stats");
-            Console.WriteLine();
-            Console.WriteLine($"{space}Name: {player.Name}");
-            Console.WriteLine($"{space}Leben: {player.Health}");
-            Console.WriteLine($"{space}Level: {player.Level}");
-            Console.WriteLine($"{space}Angriffskraft: {player.AttackPower}");
-            Console.WriteLine($"{space}Erfahrung: {player.Experience}/{(player.Level * 100)}");
-            Console.WriteLine($"{space}Gold: {player.Gold}");
-            DrawSeperator();
-        }
-
         static int GetDifficultyLevel()
         {
             int difficulty = 0;
@@ -275,29 +263,7 @@ namespace ConsoleRPG
             Thread.Sleep(3000);
             return name;
         }
-        public static void ShowStatistics(List <Statistics> statistics)
-        {
-            //Nach dem ein Spieldurchgang vorbei ist, werden einige Variablen gespeichert
-            //Und in die Statistiken eingetragen, mit der Auswahl für case 3 werden
-            //diese dann ausgegeben und man sieht vorherig absolvierte Spieldurchläufe
-            //Daten wie: Name, Runde, Gold, Lvl etc.
-
-            Console.WriteLine($"{space}Vergangene Spieldurchläufe: ");
-            if (statistics.Count == 0)
-            {
-                Console.WriteLine($"{space}Es gibt leider noch keine Statistiken.");
-            }
-            else
-            {
-                DrawSeperator();
-                foreach (var stat in statistics)
-                {
-                    Console.WriteLine(stat.ToString());
-                    DrawSeperator();
-                }
-                
-            }
-        }
+        
         public static void ShowMainMenu()
         {
             DrawSeperator();
@@ -308,7 +274,6 @@ namespace ConsoleRPG
             Console.WriteLine($"{space}5. Spiel beenden");
             DrawSeperator();
         }
-
         public static void DrawSeperator()
         {
             Console.Write("+");
