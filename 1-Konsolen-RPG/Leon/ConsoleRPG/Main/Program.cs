@@ -2,8 +2,9 @@
 using ConsoleRPG.Items;
 using ConsoleRPG.Characters;
 using ConsoleRPG.Shop;
+using ConsoleRPG.GameStats;
 
-namespace ConsoleRPG
+namespace ConsoleRPG.Main
 {
     internal class Program
     {
@@ -134,7 +135,7 @@ namespace ConsoleRPG
                             Console.ReadKey();
                             break;
                         case 3:
-                            var shop = new ConsoleRPG.Shop.Shop(itemDatabase, player.Round);
+                            var shop = new Shop.Shop(itemDatabase, player.Round);
                             shop.ShowShopItems(player);
 
                             break;

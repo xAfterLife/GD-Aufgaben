@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsoleRPG.Items;
+using ConsoleRPG.Main;
 using ConsoleRPG.Utilities;
 
 namespace ConsoleRPG.Characters

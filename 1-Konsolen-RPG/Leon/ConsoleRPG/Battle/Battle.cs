@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleRPG.Characters;
 
-namespace ConsoleRPG
+namespace ConsoleRPG.Battle
 {
 
     internal class Battle
@@ -18,7 +18,7 @@ namespace ConsoleRPG
             this.player = player;
 
             //Generiere ein Monster basierend auf der Runde
-            this.monster = GenerateMonster(player.Round);
+            monster = GenerateMonster(player.Round);
 
             //Starte kampf
             StartBattle();
@@ -26,10 +26,10 @@ namespace ConsoleRPG
 
         private Monster GenerateMonster(int round)
         {
-            int monsterHealth = 10 + (round * 2);
-            int monsterAttack = 3 + (round / 2);
-            int monsterRewardGold = 5 + (round * 2);
-            int monsterRewardXP = 10 + (round * 2);
+            int monsterHealth = 10 + round * 2;
+            int monsterAttack = 3 + round / 2;
+            int monsterRewardGold = 5 + round * 2;
+            int monsterRewardXP = 10 + round * 2;
 
             Monster monster = new Monster("Random", monsterHealth, monsterAttack, monsterRewardGold, monsterRewardXP);
             monster.Name = GetRandomMonsterName();
@@ -185,7 +185,7 @@ namespace ConsoleRPG
             totalDamage = player.Attack(totalDamage);
             monster.Health -= totalDamage;
 
-            
+
             if (player.CurrentWeapon != null)
             {
                 Console.WriteLine($"{space}{player.Name} greift {monster.Name}");
