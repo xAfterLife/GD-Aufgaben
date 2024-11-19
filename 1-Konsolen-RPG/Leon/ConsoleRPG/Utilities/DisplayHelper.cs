@@ -1,8 +1,13 @@
-﻿using ConsoleRPG.Items;
+﻿using ConsoleRPG.Characters;
+using ConsoleRPG.Items;
+using ConsoleRPG.Battle;
+using ConsoleRPG.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleRPG.Utilities
@@ -12,7 +17,7 @@ namespace ConsoleRPG.Utilities
         public static void DrawSeparator()
         {
             Console.Write("+");
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 50; i++)
             {
                 Console.Write("-");
             }
@@ -55,6 +60,14 @@ namespace ConsoleRPG.Utilities
             Console.ResetColor();
 
             Console.WriteLine();
+        }
+
+        public static void ShowBattleStatus(Player player, Monster monster, int round)
+        {
+            const string space = "      ";
+            DrawSeparator();
+            Console.WriteLine($"{space}Runde: {round}");
+            Console.WriteLine($"{space}{player.Name}: {player.Health}/{player.MaxHealth} HP | {monster.Name}: {monster.Health} HP");
         }
     }
 }

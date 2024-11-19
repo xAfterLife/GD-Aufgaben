@@ -3,6 +3,9 @@ using ConsoleRPG.Items;
 using ConsoleRPG.Characters;
 using ConsoleRPG.Shop;
 using ConsoleRPG.GameStats;
+using ConsoleRPG.Utilities;
+using ConsoleRPG.Battle;
+
 
 namespace ConsoleRPG.Main
 {
@@ -31,7 +34,7 @@ namespace ConsoleRPG.Main
             {
                 Console.Clear();
                 //Begrüßung
-                DrawSeperator();
+                DisplayHelper.DrawSeparator();
                 Console.WriteLine($"{space}Herzlich Willkommen zu deinem Abenteuer!");
 
                 //Anzeigen des Hauptmenüs
@@ -43,7 +46,7 @@ namespace ConsoleRPG.Main
                 //Abfangen falscher eingaben
                 if (int.TryParse(Console.ReadLine(), out int startChoice))
                 {
-                    DrawSeperator();
+                    DisplayHelper.DrawSeparator();
 
                     switch (startChoice)
                     {
@@ -80,7 +83,7 @@ namespace ConsoleRPG.Main
                     Console.WriteLine($"{space}Ungültige Eingabe, bitte gebe eine Zahl 1-6 ein.");
                     Console.ResetColor();
                     Console.ReadKey();
-                    DrawSeperator();
+                    DisplayHelper.DrawSeparator();
                 }
             }
         }
@@ -88,9 +91,9 @@ namespace ConsoleRPG.Main
         static void GameStart()
         {
             ItemDataBase itemDatabase = new ItemDataBase();
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.WriteLine($"{space}Das spiel beginnt..");
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Thread.Sleep(3000);
             Console.Clear();
 
@@ -120,12 +123,12 @@ namespace ConsoleRPG.Main
 
                 if (int.TryParse(Console.ReadLine(), out int playerchoice))
                 {
-                    DrawSeperator();
+                    DisplayHelper.DrawSeparator();
 
                     switch (playerchoice)
                     {
                         case 1:
-                            Battle battle = new(player);
+                            var battle = new ConsoleRPG.Battle.Battle(player);
                             Thread.Sleep(1000);
                             battle.StartBattle();
 
@@ -167,7 +170,7 @@ namespace ConsoleRPG.Main
                     Console.WriteLine($"{space}Ungültige Eingabe, bitte gebe eine Zahl 1-6 ein.");
                     Console.ResetColor();
                     Console.ReadKey();
-                    DrawSeperator();
+                    DisplayHelper.DrawSeparator();
                 }
             }
         }
@@ -175,19 +178,19 @@ namespace ConsoleRPG.Main
         static void ShowPlayerMenu()
         {
             Console.WriteLine($"{space}Spielermenü");
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.WriteLine($"{space}1. Kämpfen");
             Console.WriteLine($"{space}2. Inventar");
             Console.WriteLine($"{space}3. Shop");
             Console.WriteLine($"{space}4. Taverne");
             Console.WriteLine($"{space}5. Playerstats");
             Console.WriteLine($"{space}6. Speichern und Beenden");
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.Write($"{space}Bitte wähle eine Option: ");
         }
         static void AdjustPlayerForDifficulty(Player player, int difficulty)
         {
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             switch (difficulty)
             {
                 case 1: //Einfach
@@ -214,7 +217,7 @@ namespace ConsoleRPG.Main
                     break;
 
             }
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Thread.Sleep(3000);
         }
         static int GetDifficultyLevel()
@@ -224,9 +227,9 @@ namespace ConsoleRPG.Main
 
             while (!validChoice)
             {
-                DrawSeperator();
+                DisplayHelper.DrawSeparator();
                 Console.WriteLine($"{space}Wähle deinen Schwierigkeitsgrad");
-                DrawSeperator();
+                DisplayHelper.DrawSeparator();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"{space}1. Einfach");
@@ -240,7 +243,7 @@ namespace ConsoleRPG.Main
                 Console.WriteLine($"{space}3. Schwer");
                 Console.ResetColor();
 
-                DrawSeperator();
+                DisplayHelper.DrawSeparator();
 
                 Console.Write($"{space}Bitte wähle: ");
 
@@ -259,11 +262,11 @@ namespace ConsoleRPG.Main
         }
         static string GetPlayerName()
         {
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.Write($"{space}Bitte gebe deinen Namen ein: ");
             string name = Console.ReadLine();
 
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
 
             Console.WriteLine($"{space}Ah, {name} also."); //Voll Pokémonlike haha
             Thread.Sleep(2000);
@@ -274,22 +277,13 @@ namespace ConsoleRPG.Main
 
         public static void ShowMainMenu()
         {
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.WriteLine($"{space}1. Spiel starten");
             Console.WriteLine($"{space}2. Spiel Laden");
             Console.WriteLine($"{space}3. Statistiken");
             Console.WriteLine($"{space}4. Hilfe");
             Console.WriteLine($"{space}5. Spiel beenden");
-            DrawSeperator();
-        }
-        public static void DrawSeperator()
-        {
-            Console.Write("+");
-            for (int i = 0; i < 50; i++)
-            {
-                Console.Write("-");
-            }
-            Console.WriteLine("+");
+            DisplayHelper.DrawSeparator();
         }
     }
 }

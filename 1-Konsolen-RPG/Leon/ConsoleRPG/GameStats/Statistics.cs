@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleRPG.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,23 +42,14 @@ namespace ConsoleRPG.GameStats
             }
             else
             {
-                DrawSeperator();
+                DisplayHelper.DrawSeparator();
                 foreach (var stat in statistics)
                 {
                     Console.WriteLine(stat.ToString());
-                    DrawSeperator();
+                    DisplayHelper.DrawSeparator();
                 }
 
             }
-        }
-        public static void DrawSeperator()
-        {
-            Console.Write("+");
-            for (int i = 0; i < 50; i++)
-            {
-                Console.Write("-");
-            }
-            Console.WriteLine("+");
         }
     }
 }

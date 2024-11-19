@@ -58,7 +58,6 @@ namespace ConsoleRPG.Characters
             Console.WriteLine($"{space}Level Up!\n{space}Neues Level: {Level}");
             Console.ResetColor();
             DisplayHelper.DrawSeparator();
-            Console.ReadKey();
             //Nach dem Lvlup werden alle gesammelten Erfahrungspunkte auf 0 gesetzt, da
             //Der Spieler eine Stufe aufgestiegen ist und wieder bei 0 beginnt
             Experience = 0;
@@ -82,20 +81,16 @@ namespace ConsoleRPG.Characters
         //Crits hat, stichwort polymorphismus
         public override int Attack(int damage)
         {
-            AttackPower = damage;
-
             int crit = random.Next(1, 10);
             if (crit > 8)
             {
                 damage *= 2;
                 Console.WriteLine($"{space}Ein Crit!");
-                return damage;
+                Console.ReadKey();
             }
-            else
-            {
-                return damage;
-            }
+            return damage;
         }
+
         public void ShowPlayerInventory()
         {
             if (Inventory.Count > 0)
@@ -144,7 +139,7 @@ namespace ConsoleRPG.Characters
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(Gold);
             Console.ResetColor();
-            Program.DrawSeperator();
+            DisplayHelper.DrawSeparator();
         }
     }
 }
