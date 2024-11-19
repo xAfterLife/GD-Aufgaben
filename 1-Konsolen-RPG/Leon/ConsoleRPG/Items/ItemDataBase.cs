@@ -123,5 +123,16 @@ namespace ConsoleRPG.Items
             Weapons.Add(new Weapon("Drachenschwinge", Rarity.Legendary, 150, 50, 13));
         }
 
+        /// <summary>
+        /// Gibt ein Item (Waffe) basierend auf dem Namen zurück.
+        /// </summary>
+        /// <param name="name">Der Name des gesuchten Items.</param>
+        /// <returns>Das entsprechende Item oder null, falls es nicht gefunden wurde.</returns>
+        public Weapon GetItemByName(string name)
+        {
+            // Suche in der Liste nach einer Waffe mit dem entsprechenden Namen
+            return Weapons.FirstOrDefault(weapon => weapon.Name == name);
+        }
+
     }
 }

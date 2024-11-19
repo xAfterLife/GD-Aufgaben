@@ -5,6 +5,8 @@ using ConsoleRPG.Shop;
 using ConsoleRPG.GameStats;
 using ConsoleRPG.Utilities;
 using ConsoleRPG.Battle;
+using ConsoleRPG.GameFile;
+using System.Numerics;
 
 
 namespace ConsoleRPG.Main
@@ -15,6 +17,9 @@ namespace ConsoleRPG.Main
         const string space = "      ";
         //Statistiken
         static List<Statistics> statistics = new List<Statistics>();
+
+        static Player player;
+        static ItemDataBase itemDatabase = new ItemDataBase();
 
         static void Main(string[] args)
         {
@@ -56,7 +61,29 @@ namespace ConsoleRPG.Main
                             gameStart = false;
                             GameStart();
                             break;
-                        case 2:
+                        case 2: // Spiel Laden
+                            SaveManager save = LoadManager.LoadGame("savegame.json");
+                            if (save != null)
+                            {
+                                player = new Player(save.Name, save.Health, save.AttackPower, save.Level, save.Experience, save.Gold, new List<Item>())
+                                {
+                                    MaxHealth = save.MaxHealth,
+                                    Round = save.Round,
+                                    Inventory = save.Inventory
+                                        .Select(itemName => itemDatabase.GetItemByName(itemName))
+                                        .Where(item => item != null) // Prüfe auf null
+                                        .Cast<Item>()
+                                        .ToList(),
+                                    CurrentWeapon = itemDatabase.GetItemByName(save.CurrentWeapon) as Weapon
+                                };
+
+                                Console.WriteLine("Spiel erfolgreich geladen.");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                Console.ReadKey();
+                            }
                             break;
                         case 3:
                             Statistics.ShowStatistics(statistics);
@@ -105,7 +132,7 @@ namespace ConsoleRPG.Main
             List<Item> inventory = new List<Item>();
 
             //Standard stats für normal
-            Player player = new Player(playerName, 100, 10, 1, 0, 50, inventory)
+            player = new Player(playerName, 100, 10, 1, 0, 50, inventory)
             {
                 CurrentWeapon = new Weapon("Starter-Schwert", Rarity.Common, 10, 5, 0)
             };
@@ -128,7 +155,7 @@ namespace ConsoleRPG.Main
                     switch (playerchoice)
                     {
                         case 1:
-                            var battle = new ConsoleRPG.Battle.Battle(player);
+                            var battle = new Battle.Battle(player);
                             Thread.Sleep(1000);
                             battle.StartBattle();
 
@@ -151,9 +178,8 @@ namespace ConsoleRPG.Main
                             Console.ReadKey();
                             break;
                         case 6:
-                            //Kommt später eine Speicher & Game schließen Methode rein
-                            Console.WriteLine($"{space}Das Spiel wird beendet..");
-                            Thread.Sleep(3000);
+                            SaveManager.SaveGame(player, "save.json");
+                            Console.ReadKey();
                             Environment.Exit(0);
                             break;
                         default:
