@@ -1,4 +1,7 @@
 ﻿using System;
+using ConsoleRPG.Items;
+using ConsoleRPG.Characters;
+using ConsoleRPG.Shop;
 
 namespace ConsoleRPG
 {
@@ -15,6 +18,7 @@ namespace ConsoleRPG
             Console.Title = "ConsoleRPG";
             Random random = new();
             bool gameStart = true;
+
 
             //Test Data, wird später in einer File gespeichert und geladen
             statistics.Add(new Statistics("Leon", 5, 10, 200));
@@ -36,7 +40,7 @@ namespace ConsoleRPG
                 Console.Write($"{space}Bitte wähle einen Punkt aus: ");
 
                 //Abfangen falscher eingaben
-                if (int.TryParse( Console.ReadLine(), out int startChoice)) 
+                if (int.TryParse(Console.ReadLine(), out int startChoice))
                 {
                     DrawSeperator();
 
@@ -82,7 +86,7 @@ namespace ConsoleRPG
         //Spieleinstiegspunkt definiert
         static void GameStart()
         {
-
+            ItemDataBase itemDatabase = new ItemDataBase();
             DrawSeperator();
             Console.WriteLine($"{space}Das spiel beginnt..");
             DrawSeperator();
@@ -97,7 +101,10 @@ namespace ConsoleRPG
             List<Item> inventory = new List<Item>();
 
             //Standard stats für normal
-            Player player = new Player(playerName, 100, 10, 1, 0, 50, inventory );
+            Player player = new Player(playerName, 100, 10, 1, 0, 50, inventory)
+            {
+                CurrentWeapon = new Weapon("Starter-Schwert", Rarity.Common, 10, 5, 0)
+            };
             AdjustPlayerForDifficulty(player, difficulty);
             player.ShowPlayerStats();
             Console.ReadKey();
@@ -108,8 +115,8 @@ namespace ConsoleRPG
             {
                 Console.Clear();
                 ShowPlayerMenu();
-                
-                
+
+
                 if (int.TryParse(Console.ReadLine(), out int playerchoice))
                 {
                     DrawSeperator();
@@ -120,14 +127,14 @@ namespace ConsoleRPG
                             Battle battle = new(player);
                             Thread.Sleep(1000);
                             battle.StartBattle();
-                            
+
                             break;
                         case 2:
                             player.ShowPlayerInventory();
                             Console.ReadKey();
                             break;
                         case 3:
-                            Shop shop = new Shop(new ItemDataBase(), player.Level);
+                            var shop = new ConsoleRPG.Shop.Shop(itemDatabase, player.Round);
                             shop.ShowShopItems(player);
 
                             break;
@@ -187,7 +194,7 @@ namespace ConsoleRPG
                     player.MaxHealth = player.Health;
                     player.AttackPower += 5;
                     player.Gold += 50;
-                    Console.ForegroundColor= ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"{space}Einfacher Modus gewählt. \n{space}Deine Werte wurden angepasst.");
                     Console.ResetColor();
                     break;
@@ -245,7 +252,7 @@ namespace ConsoleRPG
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write("Ungültige Eingabe, wähle zwischen 1-3: ");
                     Console.ResetColor();
-                }   
+                }
             }
             return difficulty;
         }
@@ -263,7 +270,7 @@ namespace ConsoleRPG
             Thread.Sleep(3000);
             return name;
         }
-        
+
         public static void ShowMainMenu()
         {
             DrawSeperator();

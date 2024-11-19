@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsoleRPG.Characters;
 
 namespace ConsoleRPG
 {
-    
+
     public class Character
     {
         //Initialisieren/Deklarieren der Random Klasse
@@ -29,7 +30,7 @@ namespace ConsoleRPG
         }
 
         //Allgemeine Attack Methode, die von allen ausgeführt werden kann
-        public int Attack(int damage)
+        public virtual int Attack(int damage)
         {
             AttackPower = damage;
             //Methode evt. für den Player überschreiben damit nur er crits machen kann

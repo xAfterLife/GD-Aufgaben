@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsoleRPG.Items;
+using ConsoleRPG.Utilities;
 
-namespace ConsoleRPG
+namespace ConsoleRPG.Characters
 {
     //Erstellen der Player Klasse, Erbt Felder und Funktionen von Character
     public class Player : Character
@@ -14,12 +16,14 @@ namespace ConsoleRPG
         public int Level { get; set; }
         public int Experience { get; set; }
         public int Gold { get; set; }
-        public Weapon CurrentWeapon { get; set; }
+        public Weapon? CurrentWeapon { get; set; }
         public List<Item> Inventory { get; set; }
         public int Round { get; set; } = 1;
+        
+
 
         //Konstruktor des Players, name, health & attackPower müssen hier nicht gleichgesetzt werden, da die Klasse erbt
-        public Player(string name, int health, int attackPower, int level, int experience, int gold, List <Item> inventory)
+        public Player(string name, int health, int attackPower, int level, int experience, int gold, List<Item> inventory)
             : base(name, health, attackPower)
         {
             Level = level;
@@ -27,11 +31,11 @@ namespace ConsoleRPG
             Gold = gold;
             Inventory = inventory;
         }
-        
+
 
         public void GainExperience(int xp)
         {
-            if ((Level * 100) <= Experience)
+            if (Level * 100 <= Experience)
             {
                 LevelUp();
             }
@@ -52,7 +56,7 @@ namespace ConsoleRPG
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{space}Level Up!\n{space}Neues Level: {Level}");
             Console.ResetColor();
-            DrawSeperator();
+            DisplayHelper.DrawSeparator();
             Console.ReadKey();
             //Nach dem Lvlup werden alle gesammelten Erfahrungspunkte auf 0 gesetzt, da
             //Der Spieler eine Stufe aufgestiegen ist und wieder bei 0 beginnt
@@ -60,7 +64,7 @@ namespace ConsoleRPG
         }
         public void Heal(int healingAmount)
         {
-            if ((healingAmount + Health) > MaxHealth)
+            if (healingAmount + Health > MaxHealth)
             {
                 Health = MaxHealth;
                 Console.WriteLine($"{space}{Name} hat sich geheilt.");
@@ -75,7 +79,7 @@ namespace ConsoleRPG
         }
         //Ich habe die Methode von Character überschrieben, damit nur der Spieler möglichkeit auf 
         //Crits hat, stichwort polymorphismus
-        public int Attack(int damage)
+        public override int Attack(int damage)
         {
             AttackPower = damage;
 
@@ -98,9 +102,9 @@ namespace ConsoleRPG
                 Console.WriteLine($"{space}Inventar:");
                 foreach (Item item in Inventory)
                 {
-                    if (item == CurrentWeapon)
+                    if (item is Weapon weapon && weapon == CurrentWeapon)
                     {
-                        Console.WriteLine($"{space}{item.Name} (ausgerüstet)");
+                        Console.WriteLine($"{space}{weapon.Name} (ausgerüstet)");
                     }
                     else
                     {
@@ -133,24 +137,13 @@ namespace ConsoleRPG
             }
             Console.WriteLine();
 
-            Console.WriteLine($"{space}Erfahrung: {Experience}/{(Level * 100)}");
+            Console.WriteLine($"{space}Erfahrung: {Experience}/{Level * 100}");
 
             Console.Write($"{space}Gold: ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(Gold);
             Console.ResetColor();
             Program.DrawSeperator();
-        }
-
-
-        public static void DrawSeperator()
-        {
-            Console.Write("+");
-            for (int i = 0; i < 50; i++)
-            {
-                Console.Write("-");
-            }
-            Console.WriteLine("+");
         }
     }
 }
